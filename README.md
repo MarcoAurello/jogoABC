@@ -16,6 +16,8 @@ A criança vê a figura e arrasta as letras até o lugar certo da palavra. A Tia
   - a cada 2 palavras montadas a palavra ganha mais uma sílaba.
 - As palavras alternam entre montar com **letras** (C · O · P · O) e com **sílabas inteiras** (BA · NA · NA).
 - 9 peças para escolher: as da palavra + peças parecidas que confundem (B/D/P, M/N, F/V; BA/DA/BO...). Mudam a cada palavra.
+- Ao aparecer, a palavra é falada; se a criança ficar 6 s parada sem concluir, a palavra é falada de novo (a cada 6 s).
+- Depois de 3 erros seguidos, a peça certa e o espaço dela ficam brilhando (dica). O relatório mostra onde precisou da dica.
 - Dá para **arrastar** ou **tocar na letra e depois no espaço** (mais fácil para quem tem dificuldade motora). Também funciona pelo teclado.
 
 ## Métrica (tempo por peça: letra ou sílaba)

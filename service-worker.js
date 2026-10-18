@@ -1,14 +1,14 @@
 // Guarda os arquivos do jogo para funcionar offline.
 // Ao mudar qualquer arquivo, aumente a VERSAO (e o ?v= no index.html) para os aparelhos baixarem a nova.
-const VERSAO = 'abc-tia-ana-v11';
+const VERSAO = 'abc-tia-ana-v12';
 
 const ARQUIVOS = [
   './',
   './index.html',
-  './style.css?v=11',
-  './dados.js?v=11',
-  './musica.js?v=11',
-  './jogo.js?v=11',
+  './style.css?v=12',
+  './dados.js?v=12',
+  './musica.js?v=12',
+  './jogo.js?v=12',
   './vendor/jspdf.umd.min.js',
   './manifest.json',
   './assets/ana/ana_livro.jpg',

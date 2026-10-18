@@ -265,6 +265,7 @@
     jogo.bloqueado = false;
     jogo.atual.marco = performance.now();
     rodarRelogio(true);
+    vigiarPalavra();
   };
 
   function nivelAtual() {
@@ -330,6 +331,8 @@
     const registro = { texto, silabas: p.silabas, modo, unidades, letras: [], erros: [], completa: false, marco: performance.now() };
     jogo.palavras.push(registro);
     jogo.atual = registro;
+    jogo.errosSeguidos = 0;
+    jogo.dicaEm = null;
     // algumas peças já vêm prontas (ex.: C _ P O); no começo falta só uma
     const faltam = new Set(embaralhar(unidades.map((_, k) => k)).slice(0, quantasFaltam(unidades.length)));
     jogo.preenchidas = unidades.map((_, k) => !faltam.has(k));
@@ -519,12 +522,54 @@
     else peca.focus();
   });
 
+  // ---------- Falar o nome da palavra ----------
+  // Ao aparecer, a palavra é falada; se a criança ficar 6 s sem concluir (e sem mexer), repete a cada 6 s.
+  const REPETIR_A_CADA = 6;   // segundos
+  const DICA_APOS = 3;        // depois de 3 erros seguidos, a peça certa fica em destaque
+  let vigia = null;
+
+  async function falarPalavra() {
+    if (!jogo || jogo.acabou || jogo.bloqueado) return;
+    const p = jogo.atual;
+    await falarSeLivre(p.texto.toLowerCase());
+    if (jogo && jogo.atual === p) jogo.marcoFala = performance.now();
+  }
+
+  function vigiarPalavra() {
+    clearInterval(vigia);
+    jogo.marcoFala = performance.now();
+    esperarSilencio().then(falarPalavra);
+    vigia = setInterval(() => {
+      if (!jogo || jogo.acabou) return clearInterval(vigia);
+      if (!jogo.rodando || jogo.bloqueado || tocandoAgora) return;
+      if (performance.now() - Math.max(jogo.marcoFala, jogo.ultimaAcao || 0) >= REPETIR_A_CADA * 1000) {
+        jogo.marcoFala = performance.now() + 60000;   // evita repetir enquanto fala
+        falarPalavra();
+      }
+    }, 300);
+  }
+
+  // destaca a peça certa e o espaço dela
+  function darDica(i) {
+    const certa = jogo.atual.unidades[i];
+    limparDica();
+    document.querySelector(`#palavra .casa[data-i="${i}"]`)?.classList.add('dica');
+    document.querySelectorAll('#letras .peca').forEach((p) => p.dataset.letra === certa && p.classList.add('dica'));
+    jogo.dicaEm = i;
+    avisar(`Dica: a peça certa é ${certa}. Ela está brilhando.`);
+  }
+  function limparDica() {
+    document.querySelectorAll('.dica').forEach((el) => el.classList.remove('dica'));
+    if (jogo) jogo.dicaEm = null;
+  }
+
   // ---------- Conferir a letra ----------
   function tentar(i, letra) {
     const p = jogo.atual;
     if (jogo.bloqueado || jogo.preenchidas[i]) return false;
     const certa = p.unidades[i];
     const casa = document.querySelector(`#palavra .casa[data-i="${i}"]`);
+    jogo.ultimaAcao = performance.now();
 
     if (letra !== certa) {
       p.erros.push({ esperada: certa, colocada: letra });
@@ -534,14 +579,19 @@
       anaEstado('triste', 1800);
       avisar(`${letra} não é desse espaço. Tente outra.`);
       falarAna('erro');
+      // 3 erros seguidos: a peça certa fica brilhando
+      jogo.errosSeguidos = (jogo.errosSeguidos || 0) + 1;
+      if (jogo.errosSeguidos >= DICA_APOS) darDica(i);
       return false;
     }
 
     const agora = performance.now();
     const tempo = (agora - p.marco) / 1000;
     p.marco = agora;
-    p.letras.push({ letra, tempo, erros: p.erros.filter((e) => e.esperada === letra && !e.contada).length });
+    p.letras.push({ letra, tempo, erros: p.erros.filter((e) => e.esperada === letra && !e.contada).length, ajuda: jogo.dicaEm === i });
     p.erros.forEach((e) => { if (e.esperada === letra) e.contada = true; });
+    jogo.errosSeguidos = 0;
+    limparDica();
 
     jogo.preenchidas[i] = true;
     casa.textContent = letra;
@@ -581,12 +631,14 @@
     jogo.bloqueado = false;
     jogo.atual.marco = performance.now();
     rodarRelogio(true);
+    vigiarPalavra();
   }
 
   $('btn-ouvir').onclick = () => { if (jogo?.atual) falarSeLivre(jogo.atual.texto.toLowerCase()); };
 
   // ---------- Fim e relatório ----------
   async function fimDaPartida() {
+    clearInterval(vigia);
     jogo.acabou = true;
     jogo.bloqueado = true;
     rodarRelogio(false);
@@ -640,6 +692,8 @@
     if (lentas.length) dificuldades.push(`Demorou para achar: ${lentas.map((l) => `<b>${l.letra}</b> (${fmt(l.media)} s)`).join(', ')}.`);
     porPalavra.filter((p) => p.classe === 'treinar' && p.completa).forEach((p) =>
       dificuldades.push(`Palavra <b>${p.texto}</b>: ${fmt(p.media)} s por peça, precisa treinar mais.`));
+    const ajudadas = letras.filter((l) => l.ajuda).map((l) => `<b>${l.letra}</b>`);
+    if (ajudadas.length) dificuldades.push(`Precisou da dica (peça brilhando, depois de 3 erros) em: ${[...new Set(ajudadas)].join(", ")}.`);
     const incompleta = porPalavra.find((p) => !p.completa);
     if (incompleta) dificuldades.push(`O tempo acabou durante a palavra <b>${incompleta.texto}</b> (${incompleta.letras} de ${incompleta.faltam} letras).`);
     if (!dificuldades.length) dificuldades.push('Nenhuma dificuldade forte nesta partida. Continue praticando!');

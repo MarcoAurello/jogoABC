@@ -335,3 +335,7 @@ body { display: flex; flex-direction: column; min-height: 100dvh; }
   .ana-sprite { width: 64px; height: 92px; }
   .relogio { font-size: 1.4rem; }
 }
+
+/* dica depois de 3 erros: a peça certa e o espaço dela brilham */
+.peca.dica, .casa.dica { outline: 6px solid #ffd400; outline-offset: 3px; animation: brilhar 0.9s ease-in-out infinite; }
+@keyframes brilhar { 50% { outline-color: #ff9800; transform: scale(1.08); } }

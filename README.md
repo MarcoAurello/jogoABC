@@ -42,7 +42,7 @@ o número está em `TELEFONE_ANA` no `jogo.js` (81 98821-9018). A mensagem é "O
 | acerto1/2.ogg | letra certa (alternando) |
 | erroletra1/2/3.ogg | letra errada (em rodízio) |
 | mudar-palavra.ogg | a cada 3 palavras montadas |
-| faltam-30.ogg | faltando 30 segundos (**ainda falta gravar**: "Corre! Faltam só 30 segundos!"; até lá a voz do aparelho avisa) |
+| faltam-30.ogg | faltando 30 segundos (a Tia Ana vai gravar; até lá só o relógio pisca) |
 | recado-fim.ogg | fim do tempo |
 
 A Tia Ana fala **um áudio por vez**: se já estiver falando, o novo áudio não toca.

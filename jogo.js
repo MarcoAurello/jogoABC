@@ -102,7 +102,7 @@
       // som ainda bloqueado ou .ogg sem suporte: a voz do aparelho fala uma frase parecida
       Musica.abaixar(true);
       meu.parar = () => speechSynthesis.cancel();
-      await falarTexto(FALAS[momento]);
+      if (FALAS[momento]) await falarTexto(FALAS[momento]);   // sem frase (ex.: aviso dos 30 s): fica em silêncio
     } else {
       Musica.abaixar(true);
       await new Promise((fim) => {

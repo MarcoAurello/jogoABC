@@ -67,5 +67,6 @@ const FALAS = {
   acerto: 'Muito bem!',
   erro: 'Ops! Tente outra letra.',
   mudar: 'Agora, uma nova palavra!',
+  corre: 'Corre! Faltam só 30 segundos!',
   fim: 'Acabou o tempo! Parabéns por jogar!',
 };

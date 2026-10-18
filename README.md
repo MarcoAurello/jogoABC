@@ -6,7 +6,7 @@ A criança vê a figura e arrasta as letras até o lugar certo da palavra. A Tia
 
 ## Como funciona
 - Pede o nome do jogador e mostra a Tia Ana.
-- Partida de **1 min e 30 s** (o relógio para enquanto a Tia Ana troca de palavra).
+- Partida de **2 minutos** (o relógio para enquanto a Tia Ana troca de palavra). Faltando 30 s o relógio pisca e a Tia Ana avisa para correr.
 - Palavras só com sílabas simples (consoante + vogal), de 2 e 3 sílabas (até 6 letras), em `dados.js`.
 - Começa fácil e vai dificultando:
   - 1ª e 2ª palavras: falta só **uma letra** (ex.: `C _ P O`);
@@ -41,7 +41,8 @@ o número está em `TELEFONE_ANA` no `jogo.js` (81 98821-9018). A mensagem é "O
 | explicacao-inicial.ogg | antes de começar a partida |
 | acerto1/2.ogg | letra certa (alternando) |
 | erroletra1/2/3.ogg | letra errada (em rodízio) |
-| mudar-palavra.ogg | palavra completa, antes da próxima |
+| mudar-palavra.ogg | a cada 3 palavras montadas |
+| faltam-30.ogg | faltando 30 segundos (**ainda falta gravar**: "Corre! Faltam só 30 segundos!"; até lá a voz do aparelho avisa) |
 | recado-fim.ogg | fim do tempo |
 
 A Tia Ana fala **um áudio por vez**: se já estiver falando, o novo áudio não toca.

@@ -277,3 +277,7 @@ body {
 .figura { width: clamp(150px, 26vh, 230px); overflow: hidden; border: 5px solid #fff; }
 .figura img { width: 100%; height: 100%; object-fit: cover; border-radius: 22px; }
 @media (max-height: 560px) { .figura { width: 110px; } }
+
+/* últimos 30 segundos: o relógio pisca de leve */
+.relogio.acabando { animation: pulsar 1s ease-in-out infinite; }
+@keyframes pulsar { 50% { transform: scale(1.15); } }

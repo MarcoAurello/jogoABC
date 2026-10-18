@@ -2,7 +2,9 @@
   const $ = (id) => document.getElementById(id);
 
   // ---------- Configuração ----------
-  const DURACAO = 90;         // segundos de cada partida (1 min e meio)
+  const DURACAO = 120;        // segundos de cada partida (2 minutos)
+  const AVISO_FINAL = 30;     // faltando 30 s, a Tia Ana avisa para correr
+  const MUDAR_A_CADA = 3;     // o áudio "mudar de palavra" toca a cada 3 palavras montadas
   const OTIMO = 5;            // até 5 s por letra: ótimo
   const REGULAR = 10;         // até 10 s por letra: regular; acima disso: treinar mais
   const PALAVRAS_POR_NIVEL = 2; // a cada 2 palavras montadas, a palavra ganha mais uma sílaba
@@ -30,6 +32,7 @@
     acerto: ['acerto1', 'acerto2'],
     erro: ['erroletra1', 'erroletra2', 'erroletra3'],
     mudar: ['mudar-palavra'],
+    corre: ['faltam-30'],      // grave este áudio: "Corre! Faltam só 30 segundos!"
     fim: ['recado-fim'],
   };
   const vez = {};
@@ -379,7 +382,12 @@
     const resta = Math.max(0, DURACAO - segundosJogados());
     const s = Math.ceil(resta);
     $('relogio').textContent = `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
-    $('relogio').classList.toggle('acabando', resta <= 15);
+    $('relogio').classList.toggle('acabando', resta <= AVISO_FINAL);
+    if (resta <= AVISO_FINAL && resta > 0 && !jogo.avisou && jogo.rodando) {
+      jogo.avisou = true;
+      avisar('Corre! Faltam 30 segundos!');
+      esperarSilencio().then(() => { if (!jogo.acabou) falarAna('corre'); });
+    }
     $('trilho').style.width = `${(resta / DURACAO) * 100}%`;
     $('contador').textContent = `⭐ ${jogo.palavras.filter((p) => p.completa).length}`;
     if (resta <= 0 && !jogo.acabou) fimDaPartida();
@@ -526,8 +534,11 @@
     avisar(`Parabéns! Você montou a palavra ${p.texto}.`);
     await Promise.all([falarAna('acerto'), esperar(1500)]);
     if (!jogo || jogo.acabou) return;
-    await esperarSilencio();
-    await falarAna('mudar');
+    // "mudar de palavra" só a cada 3 palavras, para não ficar repetitivo
+    if (jogo.palavras.filter((x) => x.completa).length % MUDAR_A_CADA === 0) {
+      await esperarSilencio();
+      await falarAna('mudar');
+    }
     if (!jogo || jogo.acabou) return;
     proximaPalavra();
     jogo.bloqueado = false;
@@ -622,7 +633,7 @@
     $('fim-resumo').innerHTML = r.completas
       ? `Você montou <b>${r.completas}</b> ${r.completas > 1 ? 'palavras' : 'palavra'}! ⭐`
       : 'Você treinou bastante! Vamos tentar de novo?';
-    $('relatorio-info').textContent = `${nome} · ${r.data.toLocaleDateString('pt-BR')} às ${r.data.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })} · partida de 1 min e 30 s`;
+    $('relatorio-info').textContent = `${nome} · ${r.data.toLocaleDateString('pt-BR')} às ${r.data.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })} · partida de 2 minutos`;
 
     $('selo').className = `selo ${r.classe}`;
     $('selo').innerHTML = r.letras
@@ -763,7 +774,7 @@
   function textoResumo(r) {
     return [
       `📋 ABC da Tia ANA - relatório de ${r.nome}`,
-      `${r.data.toLocaleDateString('pt-BR')} - partida de 1 min e 30 s`,
+      `${r.data.toLocaleDateString('pt-BR')} - partida de 2 minutos`,
       `Resultado: ${NOME_CLASSE[r.classe]} (${fmt(r.media)} s por peça)`,
       `Palavras montadas: ${r.completas} · Letras: ${r.letras} · Erros: ${r.erros} · Certas de primeira: ${r.primeira}%`,
       `Palavras: ${r.porPalavra.map((p) => `${p.texto} ${fmt(p.media)}s`).join(', ') || '-'}`,
@@ -785,7 +796,7 @@
     doc.text('ABC da Tia ANA - Relatório', L, 14);
     doc.setFontSize(12);
     doc.setFont('helvetica', 'normal');
-    doc.text(`${r.nome}  ·  ${r.data.toLocaleDateString('pt-BR')} ${r.data.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}  ·  partida de 1 min e 30 s`, L, 23);
+    doc.text(`${r.nome}  ·  ${r.data.toLocaleDateString('pt-BR')} ${r.data.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}  ·  partida de 2 minutos`, L, 23);
     y = 40;
     const cor = { otimo: [46, 125, 50], regular: [180, 83, 9], treinar: [198, 40, 40] }[r.classe];
     doc.setFillColor(...cor);

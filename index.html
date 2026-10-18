@@ -17,7 +17,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <!-- Andika: fonte feita para quem está aprendendo a ler -->
   <link href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=2">
+  <link rel="stylesheet" href="style.css?v=3">
 </head>
 <body>
   <a class="pular-conteudo" href="#conteudo">Ir para o jogo</a>
@@ -71,7 +71,7 @@
     <!-- 3. Jogo -->
     <section class="tela" id="tela-jogo" aria-label="Jogo">
       <div class="barra-tempo" role="timer" aria-label="Tempo restante">
-        <span class="relogio" id="relogio">1:30</span>
+        <span class="relogio" id="relogio">2:00</span>
         <div class="trilho"><div class="trilho-cheio" id="trilho"></div></div>
         <span class="contador" id="contador" aria-label="Palavras montadas">⭐ 0</span>
       </div>
@@ -138,9 +138,9 @@
   <footer class="credito">© <b>Marco Nunes</b> — Todos os direitos reservados</footer>
 
   <script src="vendor/jspdf.umd.min.js"></script>
-  <script src="dados.js?v=2"></script>
-  <script src="musica.js?v=2"></script>
-  <script src="jogo.js?v=2"></script>
+  <script src="dados.js?v=3"></script>
+  <script src="musica.js?v=3"></script>
+  <script src="jogo.js?v=3"></script>
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => navigator.serviceWorker.register('service-worker.js'));

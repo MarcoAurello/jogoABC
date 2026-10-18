@@ -1,0 +1,93 @@
+// Guarda os arquivos do jogo para funcionar offline.
+// Ao mudar qualquer arquivo, aumente a VERSAO (e o ?v= no index.html) para os aparelhos baixarem a nova.
+const VERSAO = 'abc-tia-ana-v1';
+
+const ARQUIVOS = [
+  './',
+  './index.html',
+  './style.css?v=1',
+  './dados.js?v=1',
+  './musica.js?v=1',
+  './jogo.js?v=1',
+  './vendor/jspdf.umd.min.js',
+  './manifest.json',
+  './assets/ana/ana_livro.jpg',
+  './assets/ana/ana_danca.png',
+  './assets/ana/ana_triste.png',
+  './assets/ana/ana_pensa.png',
+  './assets/figuras/banana.jpg',
+  './assets/figuras/bola.jpg',
+  './assets/figuras/casa.jpg',
+  './assets/figuras/dado.jpg',
+  './assets/figuras/fogo.jpg',
+  './assets/figuras/gato.jpg',
+  './assets/figuras/girafa.jpg',
+  './assets/figuras/janela.jpg',
+  './assets/figuras/mesa.jpg',
+  './assets/figuras/pato.jpg',
+  './assets/figuras/sapato.jpg',
+  './assets/figuras/telefone.jpg',
+  './assets/figuras/vaca.jpg',
+  ...['convite', 'explicacao-inicial', 'acerto1', 'acerto2', 'erroletra1', 'erroletra2', 'erroletra3', 'mudar-palavra', 'recado-fim']
+    .map((a) => `./audios/${a}.ogg`),
+  './icons/icon-192.png',
+  './icons/icon-512.png',
+  './icons/icon-maskable-512.png',
+  './icons/apple-touch-icon.png',
+];
+
+self.addEventListener('install', (e) => {
+  e.waitUntil(caches.open(VERSAO).then((cache) => cache.addAll(ARQUIVOS)));
+  self.skipWaiting();
+});
+
+// Apaga caches de versões antigas
+self.addEventListener('activate', (e) => {
+  e.waitUntil(
+    caches.keys().then((nomes) =>
+      Promise.all(nomes.filter((n) => !n.startsWith(VERSAO)).map((n) => caches.delete(n)))
+    )
+  );
+  self.clients.claim();
+});
+
+self.addEventListener('fetch', (e) => {
+  if (e.request.method !== 'GET') return;
+  const url = new URL(e.request.url);
+
+  // Fonte do Google: guarda na primeira vez para usar offline depois
+  if (url.hostname.endsWith('fonts.googleapis.com') || url.hostname.endsWith('fonts.gstatic.com')) {
+    e.respondWith(
+      caches.open(VERSAO + '-fontes').then(async (cache) => {
+        const salvo = await cache.match(e.request);
+        if (salvo) return salvo;
+        const resposta = await fetch(e.request);
+        cache.put(e.request, resposta.clone());
+        return resposta;
+      })
+    );
+    return;
+  }
+
+  if (url.origin !== location.origin) return;
+
+  // Áudios: vêm do cache (o navegador pede pedaços do arquivo e isso não combina com rede primeiro)
+  if (url.pathname.includes('/audios/')) {
+    e.respondWith(caches.match(e.request, { ignoreSearch: true }).then((r) => r || fetch(e.request)));
+    return;
+  }
+
+  // Demais arquivos: sempre confere com o servidor e só usa o cache sem internet
+  const pedido = e.request.mode === 'navigate' ? e.request : new Request(e.request, { cache: 'no-cache' });
+  e.respondWith(
+    fetch(pedido)
+      .then((resposta) => {
+        if (resposta.ok) {
+          const copia = resposta.clone();
+          caches.open(VERSAO).then((cache) => cache.put(e.request, copia));
+        }
+        return resposta;
+      })
+      .catch(() => caches.match(e.request, { ignoreSearch: true }).then((r) => r || caches.match('./index.html')))
+  );
+});

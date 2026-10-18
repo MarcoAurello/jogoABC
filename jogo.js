@@ -953,12 +953,31 @@
       return;
     }
     const ua = navigator.userAgent;
-    const ios = /iphone|ipad|ipod/i.test(ua);
+    // iPad novo se apresenta como Mac: reconhece pela tela de toque
+    const ios = /iphone|ipad|ipod/i.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
     const dentroDeApp = /FBAN|FBAV|Instagram|WhatsApp|Line\//i.test(ua);
-    const passos = ios
-      ? ['Abra este link no <b>Safari</b>.', 'Toque em <b>Compartilhar</b> (quadrado com a seta ⬆).', 'Escolha <b>Adicionar à Tela de Início</b>.', 'Abra pelo <b>ícone do jogo</b>.']
-      : ['Abra este link no <b>Google Chrome</b> (não dentro do WhatsApp ou Instagram).', 'Toque em <b>⋮</b> no canto de cima.', 'Toque em <b>Instalar app</b> (ou <b>Adicionar à tela inicial → Instalar</b>).', 'Abra pelo <b>ícone do jogo</b> na tela do celular.'];
-    if (dentroDeApp) passos.unshift('⚠ Você abriu pelo navegador de outro app, que não instala jogos. Toque em <b>⋮ → Abrir no navegador</b>.');
+    const fim = 'Abra pelo <b>ícone do jogo</b> na tela do celular.';
+    let passos;
+    if (ios) {
+      const outroNavegador = /CriOS|OPiOS|OPT\/|FxiOS|EdgiOS/.test(ua);
+      passos = [
+        outroNavegador
+          ? 'Toque em <b>Compartilhar</b> (quadrado com a seta ⬆, no menu ou na barra de endereço). Se não aparecer, abra este link no <b>Safari</b>.'
+          : 'Toque em <b>Compartilhar</b> (quadrado com a seta ⬆, embaixo ou em cima da tela).',
+        'Role a lista e escolha <b>Adicionar à Tela de Início</b>.',
+        'Toque em <b>Adicionar</b>.',
+        fim,
+      ];
+    } else if (/SamsungBrowser/.test(ua)) {
+      passos = ['Toque em <b>☰</b> (menu, embaixo à direita).', 'Toque em <b>Adicionar página a → Tela inicial</b>.', 'Toque em <b>Adicionar</b>.', fim];
+    } else if (/OPR\/|Opera/.test(ua)) {
+      passos = ['Toque em <b>⋮</b> (menu, no canto de cima).', 'Toque em <b>Adicionar a… → Tela inicial</b>.', 'Toque em <b>Adicionar</b>.', fim];
+    } else if (/Firefox/.test(ua)) {
+      passos = ['Toque em <b>⋮</b> (menu).', 'Toque em <b>Instalar</b> ou <b>Adicionar à tela inicial</b>.', fim];
+    } else {
+      passos = ['Toque em <b>⋮</b> no canto de cima do Chrome.', 'Toque em <b>Instalar app</b> (ou <b>Adicionar à tela inicial → Instalar</b>).', fim];
+    }
+    if (dentroDeApp) passos.unshift('⚠ Você abriu pelo navegador de outro app (WhatsApp, Instagram), que não instala jogos. Toque em <b>⋮ → Abrir no navegador</b> (no iPhone: abrir no <b>Safari</b>).');
     $('passos-instalar').innerHTML = passos.map((p) => `<li>${p}</li>`).join('');
     mostrar('tela-instalar');
   };

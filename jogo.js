@@ -68,24 +68,40 @@
     Musica.abaixar(false);
   }
 
+  const comLimite = (promessa, ms) => Promise.race([promessa, new Promise((ok) => setTimeout(ok, ms))]);
+
+  // O navegador só libera o som depois de um toque: liberamos no primeiro toque em qualquer lugar
+  function liberarSom() {
+    carregarAudios();
+    if (ctxVoz && ctxVoz.state !== 'running') ctxVoz.resume().catch(() => {});
+  }
+  ['pointerdown', 'keydown', 'touchend'].forEach((ev) => document.addEventListener(ev, liberarSom, { capture: true, passive: true }));
+
   // Toca um áudio do momento; devolve uma promessa que termina quando a fala acaba.
-  // Se a Tia Ana já estiver falando, ela não fala nada (nunca fica um áudio por cima do outro).
+  // Se a Tia Ana já estiver falando, ela não fala nada (nunca fica um áudio por cima do outro;
+  // só a música de fundo pode tocar junto).
   async function falarAna(momento) {
-    if (!pref.voz || tocandoAgora) return;
+    if (!pref.voz) return;
+    // trava de segurança: uma fala nunca segura a vez por mais de 16 s
+    if (tocandoAgora && performance.now() - tocandoAgora.inicio > 16000) calarAna();
+    if (tocandoAgora) return;
     const lista = AUDIOS[momento];
     const i = (vez[momento] = ((vez[momento] ?? -1) + 1) % lista.length);
-    const meu = {};
+    const meu = { inicio: performance.now() };
     tocandoAgora = meu;
     carregarAudios();
-    if (ctxVoz && ctxVoz.state === 'suspended') await ctxVoz.resume().catch(() => {});
-    await carregando;
+    // nunca espera para sempre: se o som não liberar ou o arquivo demorar, segue em frente
+    if (ctxVoz && ctxVoz.state !== 'running') await comLimite(ctxVoz.resume().catch(() => {}), 500);
+    await comLimite(carregando, 6000);
     if (tocandoAgora !== meu) return;   // foi calada enquanto carregava
     const t = trechos[lista[i]];
-    Musica.abaixar(true);
-    if (!t || ctxVoz.state !== 'running') {
+    if (!t || !ctxVoz || ctxVoz.state !== 'running') {
+      // som ainda bloqueado ou .ogg sem suporte: a voz do aparelho fala uma frase parecida
+      Musica.abaixar(true);
       meu.parar = () => speechSynthesis.cancel();
       await falarTexto(FALAS[momento]);
     } else {
+      Musica.abaixar(true);
       await new Promise((fim) => {
         const fonte = ctxVoz.createBufferSource();
         fonte.buffer = t.buffer;
@@ -284,7 +300,7 @@
     jogo.preenchidas = unidades.map((_, k) => !faltam.has(k));
     registro.faltam = faltam.size;
 
-    $('figura').innerHTML = p.img ? `<img src="${p.img}" alt="${texto}">` : `<span role="img" aria-label="${texto}">${p.emoji}</span>`;
+    $('figura').innerHTML = p.img ? `<img src="${p.img}" alt="${texto}" onerror="this.outerHTML='<span>${p.emoji}</span>'">` : `<span role="img" aria-label="${texto}">${p.emoji}</span>`;
 
     // casas da palavra, agrupadas por sílaba
     let i = 0;

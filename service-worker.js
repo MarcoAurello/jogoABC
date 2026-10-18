@@ -1,33 +1,23 @@
 // Guarda os arquivos do jogo para funcionar offline.
 // Ao mudar qualquer arquivo, aumente a VERSAO (e o ?v= no index.html) para os aparelhos baixarem a nova.
-const VERSAO = 'abc-tia-ana-v1';
+const VERSAO = 'abc-tia-ana-v2';
 
 const ARQUIVOS = [
   './',
   './index.html',
-  './style.css?v=1',
-  './dados.js?v=1',
-  './musica.js?v=1',
-  './jogo.js?v=1',
+  './style.css?v=2',
+  './dados.js?v=2',
+  './musica.js?v=2',
+  './jogo.js?v=2',
   './vendor/jspdf.umd.min.js',
   './manifest.json',
   './assets/ana/ana_livro.jpg',
   './assets/ana/ana_danca.png',
   './assets/ana/ana_triste.png',
   './assets/ana/ana_pensa.png',
-  './assets/figuras/banana.jpg',
-  './assets/figuras/bola.jpg',
-  './assets/figuras/casa.jpg',
-  './assets/figuras/dado.jpg',
-  './assets/figuras/fogo.jpg',
-  './assets/figuras/gato.jpg',
-  './assets/figuras/girafa.jpg',
-  './assets/figuras/janela.jpg',
-  './assets/figuras/mesa.jpg',
-  './assets/figuras/pato.jpg',
-  './assets/figuras/sapato.jpg',
-  './assets/figuras/telefone.jpg',
-  './assets/figuras/vaca.jpg',
+  ...['bola', 'vaca', 'pato', 'gato', 'sapo', 'mala', 'dado', 'foca', 'moto', 'bolo', 'cama', 'lobo', 'gelo', 'casa', 'pera',
+    'rato', 'bota', 'suco', 'galo', 'fogo', 'banana', 'cavalo', 'macaco', 'boneca', 'sapato', 'batata', 'tomate', 'pipoca',
+    'camelo', 'menina', 'menino', 'coruja', 'girafa', 'pepino', 'cebola'].map((f) => `./assets/fotos/${f}.jpg`),
   ...['convite', 'explicacao-inicial', 'acerto1', 'acerto2', 'erroletra1', 'erroletra2', 'erroletra3', 'mudar-palavra', 'recado-fim']
     .map((a) => `./audios/${a}.ogg`),
   './icons/icon-192.png',

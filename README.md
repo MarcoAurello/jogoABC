@@ -7,7 +7,7 @@ A criança vê a figura e arrasta as letras até o lugar certo da palavra. A Tia
 ## Como funciona
 - Pede o nome do jogador e mostra a Tia Ana.
 - Partida de **1 min e 30 s** (o relógio para enquanto a Tia Ana troca de palavra).
-- Palavras só com sílabas simples (consoante + vogal), de 2 a 5 sílabas, em `dados.js`.
+- Palavras só com sílabas simples (consoante + vogal), de 2 e 3 sílabas (até 6 letras), em `dados.js`.
 - Começa fácil e vai dificultando:
   - 1ª e 2ª palavras: falta só **uma letra** (ex.: `C _ P O`);
   - 3ª e 4ª: falta **metade**;
@@ -48,9 +48,11 @@ A Tia Ana fala **um áudio por vez**: se já estiver falando, o novo áudio não
 O silêncio do começo e do fim das gravações é cortado na hora de tocar. Se o aparelho não tocar `.ogg`,
 a voz do aparelho fala uma frase parecida. A música de fundo é gerada pelo próprio navegador (`musica.js`).
 
-## Figuras
-Fotos em `assets/figuras/` (recortadas de `imgs/palavras.jpg`, sem os nomes). As outras palavras usam emoji.
-Para usar uma foto, coloque `img: 'assets/figuras/nome.jpg'` na palavra em `dados.js`.
+## Fotos
+Fotos reais do Wikimedia Commons em `assets/fotos/` (um objeto só, bem claro). Créditos e licenças em `CREDITOS.md`.
+Palavras de no máximo 6 letras (2 e 3 sílabas), para crianças com deficiência intelectual.
+Para trocar uma foto, substitua o arquivo (quadrado, 400x400) com o mesmo nome. `ferramentas/fotos.ps1` e
+`ferramentas/candidatas.ps1` ajudam a buscar fotos no Commons.
 
 ## Tia Ana animada
 `ferramentas/sprites.ps1` recorta `imgs/sprites para o jogo.jpeg` e tira o fundo quadriculado,

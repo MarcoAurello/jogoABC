@@ -2,7 +2,7 @@
    Notas suaves de uma escala pentatônica em Dó, como uma caixinha de música. */
 const Musica = (() => {
   let ctx = null, saida = null, ligada = true, tocando = false, timer = null, passo = 0;
-  const VOLUME = 0.07, VOLUME_BAIXO = 0.02;
+  const VOLUME = 0.035, VOLUME_BAIXO = 0.012;
   const nota = (n) => 261.63 * Math.pow(2, n / 12);
   // melodia em graus da escala (semitons a partir do Dó); null = pausa
   const MELODIA = [12, 16, 19, 16, 14, null, 12, null, 9, 12, 14, 12, 7, null, null, null,

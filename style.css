@@ -272,3 +272,8 @@ body {
 .btn-whats-grande { font-size: 1.5rem; }
 .btn-whats:active, .btn-whats-grande:active { transform: translateY(4px); box-shadow: 0 2px 0 #0f5e30; }
 .dica-envio { background: #e7f7ee; border: 3px solid #1a8d4a; border-radius: 14px; padding: 10px 14px; font-size: 1.1rem; margin: 16px 0 0; }
+
+/* fotos reais: maiores e ocupando o quadro todo, para a criança reconhecer bem */
+.figura { width: clamp(150px, 26vh, 230px); overflow: hidden; border: 5px solid #fff; }
+.figura img { width: 100%; height: 100%; object-fit: cover; border-radius: 22px; }
+@media (max-height: 560px) { .figura { width: 110px; } }

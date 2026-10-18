@@ -1,0 +1,17 @@
+BOLA|soccer ball
+BONECA|baby doll toy
+CAMA|bed bedroom
+CASA|house facade small
+COPO|glass of water
+DEDO|index finger
+JANELA|window exterior house
+MAPA|map of Brazil
+MESA|wooden table
+PATINETE|kick scooter
+PENA|feather
+PIPOCA|popcorn bowl
+SAPATO|sneaker shoe
+SINO|brass bell
+SACOLA|paper shopping bag
+MOTO|motorcycle parked
+PIPA|kite flying

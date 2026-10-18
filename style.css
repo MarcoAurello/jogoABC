@@ -281,3 +281,32 @@ body {
 /* últimos 30 segundos: o relógio pisca de leve */
 .relogio.acabando { animation: pulsar 1s ease-in-out infinite; }
 @keyframes pulsar { 50% { transform: scale(1.15); } }
+
+/* celulares mais baixos (iPhone SE, Androids pequenos): tudo cabe sem rolar */
+@media (max-height: 720px) and (min-height: 561px) {
+  :root { --peca: clamp(56px, min(24vw, 11vh), 96px); }
+  #tela-jogo { gap: 8px; }
+  .figura { width: clamp(110px, 19vh, 170px); }
+  .ana-sprite { width: 84px; height: 120px; }
+  .barra-tempo .relogio { font-size: 1.6rem; }
+  .letras { gap: 10px; }
+}
+
+/* celular deitado: figura e palavra à esquerda, letras à direita */
+@media (orientation: landscape) and (max-height: 560px) {
+  :root { --peca: clamp(44px, 18vh, 72px); }
+  .app { max-width: 980px; padding-top: 4px; }
+  .topo { min-height: 44px; }
+  .btn-icone { width: 44px; height: 44px; font-size: 1.2rem; }
+  #tela-jogo.ativa {
+    display: grid; grid-template-columns: 1fr auto; column-gap: 20px; row-gap: 6px;
+    grid-template-areas: "barra barra" "cena letras" "palavra letras"; align-items: center;
+  }
+  .barra-tempo { grid-area: barra; }
+  .cena-jogo { grid-area: cena; }
+  .palavra { grid-area: palavra; }
+  .letras { grid-area: letras; gap: 8px; margin: 0; }
+  .figura { width: clamp(80px, 30vh, 150px); font-size: 60px; }
+  .ana-sprite { width: 64px; height: 92px; }
+  .relogio { font-size: 1.4rem; }
+}

@@ -13,25 +13,26 @@ A criança vê a figura e arrasta as letras até o lugar certo da palavra. A Tia
   - 3ª e 4ª: falta **metade**;
   - depois: a palavra inteira (às vezes ainda vem pela metade);
   - a cada 2 palavras montadas a palavra ganha mais uma sílaba.
-- 9 letras para escolher: as da palavra + letras parecidas que confundem (b/d/p, m/n, f/v...). Mudam a cada palavra.
+- As palavras alternam entre montar com **letras** (C · O · P · O) e com **sílabas inteiras** (BA · NA · NA).
+- 9 peças para escolher: as da palavra + peças parecidas que confundem (B/D/P, M/N, F/V; BA/DA/BO...). Mudam a cada palavra.
 - Dá para **arrastar** ou **tocar na letra e depois no espaço** (mais fácil para quem tem dificuldade motora). Também funciona pelo teclado.
 
-## Métrica (tempo por letra)
-| Tempo médio por letra | Resultado |
+## Métrica (tempo por peça: letra ou sílaba)
+| Tempo médio por peça | Resultado |
 |---|---|
-| até 2 s | Ótimo |
-| até 4 s | Regular |
-| mais de 4 s | Precisa treinar mais |
+| até 5 s | Ótimo |
+| até 10 s | Regular |
+| mais de 10 s | Precisa treinar mais |
 
-Ex.: BOLA (4 letras) em 8 s = ótimo; 16 s = regular; 24 s = treinar mais.
+Ex.: BOLA (4 letras) em até 20 s = ótimo; até 40 s = regular; mais que isso = treinar mais.
 Os limites estão em `jogo.js` (`OTIMO`, `REGULAR`).
 
 ## Relatório
 Ao fim: selo do resultado, números, gráfico do tempo por letra em cada palavra, gráfico das letras com mais
 dificuldade, principais dificuldades (trocas de letras, letras lentas) e evolução das últimas partidas.
-**Enviar para a Tia Ana** compartilha o PDF (no celular abre a lista de apps: WhatsApp, e-mail...).
-No computador baixa o PDF e abre o WhatsApp com o resumo. Para já abrir a conversa da Tia Ana,
-coloque o número em `TELEFONE_ANA` no `jogo.js`.
+**Enviar para a Tia Ana** compartilha o PDF: no celular abre a lista de apps (escolha WhatsApp e a Tia Ana).
+No computador baixa o PDF e abre a conversa da Tia Ana no WhatsApp para anexar;
+o número está em `TELEFONE_ANA` no `jogo.js` (81 98821-9018). A mensagem é "Oi Tia Ana, segue o relatório de NOME".
 
 ## Áudios da Tia Ana (`audios/`)
 | Arquivo | Quando toca |
@@ -43,6 +44,7 @@ coloque o número em `TELEFONE_ANA` no `jogo.js`.
 | mudar-palavra.ogg | palavra completa, antes da próxima |
 | recado-fim.ogg | fim do tempo |
 
+A Tia Ana fala **um áudio por vez**: se já estiver falando, o novo áudio não toca.
 O silêncio do começo e do fim das gravações é cortado na hora de tocar. Se o aparelho não tocar `.ogg`,
 a voz do aparelho fala uma frase parecida. A música de fundo é gerada pelo próprio navegador (`musica.js`).
 

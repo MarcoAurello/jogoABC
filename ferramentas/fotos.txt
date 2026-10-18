@@ -1,0 +1,58 @@
+# PALAVRA|artigo da Wikipedia em inglês (usa a foto principal) ou File:nome-no-commons
+BOLA|Ball
+VACA|Cattle
+PATO|Mallard
+GATO|Cat
+SAPO|Common toad
+MALA|Suitcase
+DADO|Dice
+FOCA|Harbor seal
+MAPA|Map
+SINO|Bell
+MOTO|Motorcycle
+PIPA|Kite
+BOLO|Cake
+CAMA|Bed
+LOBO|Wolf
+GELO|Ice cube
+CASA|House
+DEDO|Finger
+PENA|Feather
+LATA|Tin can
+PERA|Pear
+RATO|House mouse
+BOTA|Boot
+LUPA|Magnifying glass
+SUCO|Juice
+GALO|Rooster
+MESA|Table (furniture)
+FOGO|Campfire
+COPO|Tumbler (glass)
+BANANA|Banana
+CAVALO|Horse
+MACACO|Monkey
+BONECA|Doll
+SAPATO|Shoe
+BATATA|Potato
+TOMATE|Tomato
+PIPOCA|Popcorn
+CAMELO|Dromedary
+JANELA|Window
+CANETA|Ballpoint pen
+MENINA|Girl
+MENINO|Boy
+CORUJA|Owl
+GIRAFA|Giraffe
+PEPINO|Cucumber
+CEBOLA|Onion
+SALADA|Salad
+SACOLA|Shopping bag
+TELEFONE|Telephone
+PIRULITO|Lollipop
+CAMISETA|T-shirt
+CAPACETE|Bicycle helmet
+SABONETE|Soap
+PATINETE|Kick scooter
+PERERECA|Hylidae
+LIMONADA|Lemonade
+JABUTICABA|Plinia cauliflora

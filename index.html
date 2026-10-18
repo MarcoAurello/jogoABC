@@ -55,6 +55,7 @@
         <button class="btn-sec" id="btn-instalar" type="button" hidden>📲 Instalar</button>
         <button class="btn-sec" id="btn-trocar" type="button">👤 Trocar nome</button>
       </div>
+      <a class="btn-whats" href="https://wa.me/5581988219018?text=Oi%20Tia%20Ana!%20Vim%20pelo%20jogo%20ABC%20da%20Tia%20ANA." target="_blank" rel="noopener"><svg viewBox="0 0 32 32" width="30" height="30" aria-hidden="true"><path fill="#fff" d="M16 3C9 3 3.3 8.6 3.3 15.6c0 2.4.7 4.7 1.9 6.7L3 29l6.9-2.1c1.9 1 4 1.6 6.1 1.6 7 0 12.7-5.7 12.7-12.7C28.7 8.6 23 3 16 3zm0 23.2c-1.9 0-3.8-.5-5.4-1.5l-.4-.2-4.1 1.2 1.2-4-.3-.4c-1.1-1.7-1.7-3.6-1.7-5.7C5.3 9.7 10.1 5 16 5s10.6 4.7 10.6 10.6S21.9 26.2 16 26.2zm5.8-7.9c-.3-.2-1.9-.9-2.2-1-.3-.1-.5-.2-.7.2-.2.3-.8 1-1 1.2-.2.2-.4.2-.7.1-.3-.2-1.3-.5-2.6-1.6-1-.9-1.6-1.9-1.8-2.2-.2-.3 0-.5.1-.7l.5-.6c.2-.2.2-.4.3-.6.1-.2 0-.4 0-.6l-1-2.4c-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4-.3.3-1.2 1.1-1.2 2.8s1.2 3.2 1.4 3.5c.2.2 2.4 3.6 5.7 5 .8.3 1.4.5 1.9.7.8.3 1.5.2 2.1.1.6-.1 1.9-.8 2.2-1.5.3-.7.3-1.4.2-1.5-.1-.2-.3-.3-.6-.4z"/></svg> Falar com a Tia Ana</a>
       <p class="link-rodape"><a href="privacidade.html">Política de privacidade</a></p>
     </section>
 
@@ -109,10 +110,10 @@
         <p class="relatorio-info" id="relatorio-info"></p>
         <div class="selo" id="selo"></div>
         <div class="numeros" id="numeros"></div>
-        <h4>Tempo por letra em cada palavra</h4>
-        <canvas id="grafico-palavras" width="900" height="420" role="img" aria-label="Gráfico do tempo por letra em cada palavra"></canvas>
-        <p class="legenda"><span class="ponto otimo"></span> até 2 s: ótimo <span class="ponto regular"></span> até 4 s: regular <span class="ponto treinar"></span> mais: treinar mais</p>
-        <h4>Letras com mais dificuldade</h4>
+        <h4>Tempo por peça (letra ou sílaba) em cada palavra</h4>
+        <canvas id="grafico-palavras" width="900" height="420" role="img" aria-label="Gráfico do tempo por peça em cada palavra"></canvas>
+        <p class="legenda"><span class="ponto otimo"></span> até 5 s: ótimo <span class="ponto regular"></span> até 10 s: regular <span class="ponto treinar"></span> mais: treinar mais</p>
+        <h4>Letras e sílabas com mais dificuldade</h4>
         <canvas id="grafico-letras" width="900" height="360" role="img" aria-label="Gráfico das letras com mais erros e mais demora"></canvas>
         <h4>Principais dificuldades</h4>
         <ul class="dificuldades" id="dificuldades"></ul>
@@ -120,8 +121,9 @@
           <h4>Evolução nas últimas partidas</h4>
           <canvas id="grafico-evolucao" width="900" height="300" role="img" aria-label="Gráfico da evolução nas últimas partidas"></canvas>
         </div>
+        <p class="dica-envio" id="dica-envio" role="status" hidden></p>
         <div class="linha-botoes">
-          <button class="btn-grande" id="btn-compartilhar" type="button">📤 Enviar para a Tia Ana</button>
+          <button class="btn-grande btn-whats-grande" id="btn-compartilhar" type="button"><svg viewBox="0 0 32 32" width="30" height="30" aria-hidden="true"><path fill="#fff" d="M16 3C9 3 3.3 8.6 3.3 15.6c0 2.4.7 4.7 1.9 6.7L3 29l6.9-2.1c1.9 1 4 1.6 6.1 1.6 7 0 12.7-5.7 12.7-12.7C28.7 8.6 23 3 16 3zm0 23.2c-1.9 0-3.8-.5-5.4-1.5l-.4-.2-4.1 1.2 1.2-4-.3-.4c-1.1-1.7-1.7-3.6-1.7-5.7C5.3 9.7 10.1 5 16 5s10.6 4.7 10.6 10.6S21.9 26.2 16 26.2zm5.8-7.9c-.3-.2-1.9-.9-2.2-1-.3-.1-.5-.2-.7.2-.2.3-.8 1-1 1.2-.2.2-.4.2-.7.1-.3-.2-1.3-.5-2.6-1.6-1-.9-1.6-1.9-1.8-2.2-.2-.3 0-.5.1-.7l.5-.6c.2-.2.2-.4.3-.6.1-.2 0-.4 0-.6l-1-2.4c-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4-.3.3-1.2 1.1-1.2 2.8s1.2 3.2 1.4 3.5c.2.2 2.4 3.6 5.7 5 .8.3 1.4.5 1.9.7.8.3 1.5.2 2.1.1.6-.1 1.9-.8 2.2-1.5.3-.7.3-1.4.2-1.5-.1-.2-.3-.3-.6-.4z"/></svg> Enviar para a Tia Ana</button>
           <button class="btn-sec" id="btn-pdf" type="button">📄 Baixar PDF</button>
         </div>
       </div>

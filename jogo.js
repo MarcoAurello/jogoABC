@@ -3,10 +3,10 @@
 
   // ---------- Configuração ----------
   const DURACAO = 90;         // segundos de cada partida (1 min e meio)
-  const OTIMO = 2;            // até 2 s por letra: ótimo
-  const REGULAR = 4;          // até 4 s por letra: regular; acima disso: treinar mais
+  const OTIMO = 5;            // até 5 s por letra: ótimo
+  const REGULAR = 10;         // até 10 s por letra: regular; acima disso: treinar mais
   const PALAVRAS_POR_NIVEL = 2; // a cada 2 palavras montadas, a palavra ganha mais uma sílaba
-  const TELEFONE_ANA = '';    // WhatsApp da Tia Ana para receber o relatório, ex.: '5581999999999'
+  const TELEFONE_ANA = '5581988219018'; // WhatsApp da Tia Ana: (81) 98821-9018
   const CHAVE_NOME = 'abc-ana:nome';
   const CHAVE_HIST = 'abc-ana:historico:';
   const CHAVE_PREF = 'abc-ana:pref';
@@ -68,21 +68,21 @@
     Musica.abaixar(false);
   }
 
-  // Toca um áudio do momento; devolve uma promessa que termina quando a fala acaba
+  // Toca um áudio do momento; devolve uma promessa que termina quando a fala acaba.
+  // Se a Tia Ana já estiver falando, ela não fala nada (nunca fica um áudio por cima do outro).
   async function falarAna(momento) {
-    calarAna();
-    if (!pref.voz) return;
+    if (!pref.voz || tocandoAgora) return;
     const lista = AUDIOS[momento];
     const i = (vez[momento] = ((vez[momento] ?? -1) + 1) % lista.length);
     const meu = {};
     tocandoAgora = meu;
     carregarAudios();
-    if (ctxVoz && ctxVoz.state === 'suspended') ctxVoz.resume();
+    if (ctxVoz && ctxVoz.state === 'suspended') await ctxVoz.resume().catch(() => {});
     await carregando;
-    if (tocandoAgora !== meu) return;   // outra fala começou enquanto carregava
+    if (tocandoAgora !== meu) return;   // foi calada enquanto carregava
     const t = trechos[lista[i]];
     Musica.abaixar(true);
-    if (!t) {
+    if (!t || ctxVoz.state !== 'running') {
       meu.parar = () => speechSynthesis.cancel();
       await falarTexto(FALAS[momento]);
     } else {
@@ -91,13 +91,31 @@
         fonte.buffer = t.buffer;
         fonte.connect(ctxVoz.destination);
         let terminou = false;
-        const acabar = () => { if (!terminou) { terminou = true; fim(); } };
+        let limite = null;
+        // ao terminar (ou se o aparelho travar o som) o áudio é sempre parado, para não sobrar som tocando
+        const acabar = () => { if (terminou) return; terminou = true; clearTimeout(limite); try { fonte.stop(); } catch (e) {} fim(); };
         fonte.onended = acabar;
-        meu.parar = () => { try { fonte.stop(); } catch (e) {} acabar(); };
+        meu.parar = acabar;
         fonte.start(0, t.inicio, t.fim - t.inicio);
-        setTimeout(acabar, (t.fim - t.inicio) * 1000 + 800);
+        limite = setTimeout(acabar, (t.fim - t.inicio) * 1000 + 1500);
       });
     }
+    if (tocandoAgora === meu) { tocandoAgora = null; Musica.abaixar(false); }
+  }
+
+  const esperar = (ms) => new Promise((ok) => setTimeout(ok, ms));
+  // espera a fala atual acabar (sem cortar), para os recados importantes não se perderem
+  async function esperarSilencio() {
+    for (let k = 0; tocandoAgora && k < 100; k++) await esperar(100);
+  }
+
+  // Voz do aparelho (botão de ouvir a palavra): também respeita a regra de um áudio por vez
+  async function falarSeLivre(texto) {
+    if (!pref.voz || tocandoAgora) return;
+    const meu = { parar: () => speechSynthesis.cancel() };
+    tocandoAgora = meu;
+    Musica.abaixar(true);
+    await falarTexto(texto);
     if (tocandoAgora === meu) { tocandoAgora = null; Musica.abaixar(false); }
   }
 
@@ -113,7 +131,7 @@
       u.onend = u.onerror = fim;
       speechSynthesis.cancel();
       speechSynthesis.speak(u);
-      setTimeout(fim, 6000);
+      setTimeout(fim, 8000);
     });
   }
 
@@ -232,40 +250,67 @@
     return embaralhar(pecas.slice(0, 9));
   }
 
+  // As 9 sílabas: as da palavra + sílabas parecidas (BA/DA/PA, BA/BO...) + algumas outras
+  function montarSilabas(silabas) {
+    const daPalavra = [...new Set(silabas)];
+    const parecidas = embaralhar(daPalavra.flatMap((s) => {
+      const [c, v] = [s.slice(0, -1), s.slice(-1)];
+      return [...(PARECIDAS[c] || []).filter((x) => !'AEIOU'.includes(x)).map((x) => x + v),
+              ...'AEIOU'.split('').filter((x) => x !== v).map((x) => c + x)];
+    }).filter((s) => !daPalavra.includes(s) && !/^(Q|W)/.test(s)));
+    const pecas = [...daPalavra];
+    for (const s of parecidas) { if (pecas.length >= 9) break; if (!pecas.includes(s)) pecas.push(s); }
+    while (pecas.length < 9) {
+      const s = 'BCDFGJLMNPRSTV'[Math.floor(Math.random() * 14)] + 'AEIOU'[Math.floor(Math.random() * 5)];
+      if (!pecas.includes(s)) pecas.push(s);
+    }
+    return embaralhar(pecas.slice(0, 9));
+  }
+
+  const corDe = (peca) => CORES_LETRAS[peca[0]];
+
   function proximaPalavra() {
     const p = escolherPalavra();
     const texto = p.silabas.join('');
-    const registro = { texto, silabas: p.silabas, letras: [], erros: [], completa: false, marco: performance.now() };
+    // uma palavra com letras, a outra com sílabas inteiras (BA · NA · NA), alternando
+    const modo = jogo.palavras.length % 2 === 0 ? 'letras' : 'silabas';
+    const unidades = modo === 'letras' ? [...texto] : [...p.silabas];
+    const nomePeca = modo === 'letras' ? ['letra', 'letras'] : ['sílaba', 'sílabas'];
+    const registro = { texto, silabas: p.silabas, modo, unidades, letras: [], erros: [], completa: false, marco: performance.now() };
     jogo.palavras.push(registro);
     jogo.atual = registro;
-    // algumas letras já vêm prontas (ex.: C _ P O); no começo falta só uma
-    const faltam = new Set(embaralhar([...texto].map((_, k) => k)).slice(0, quantasFaltam(texto.length)));
-    jogo.preenchidas = [...texto].map((_, k) => !faltam.has(k));
+    // algumas peças já vêm prontas (ex.: C _ P O); no começo falta só uma
+    const faltam = new Set(embaralhar(unidades.map((_, k) => k)).slice(0, quantasFaltam(unidades.length)));
+    jogo.preenchidas = unidades.map((_, k) => !faltam.has(k));
     registro.faltam = faltam.size;
 
     $('figura').innerHTML = p.img ? `<img src="${p.img}" alt="${texto}">` : `<span role="img" aria-label="${texto}">${p.emoji}</span>`;
 
     // casas da palavra, agrupadas por sílaba
     let i = 0;
-    $('palavra').classList.remove('completa');
-    $('palavra').innerHTML = p.silabas.map((s) => `<div class="silaba">${[...s].map((l) => {
+    const casa = (u) => {
       const html = jogo.preenchidas[i]
-        ? `<span class="casa cheia dada" data-i="${i}" style="background:${CORES_LETRAS[l]}" aria-label="Letra ${l}">${l}</span>`
-        : `<button class="casa" type="button" data-i="${i}" aria-label="Espaço ${i + 1} de ${texto.length}, vazio"></button>`;
+        ? `<span class="casa cheia dada" data-i="${i}" style="background:${corDe(u)}" aria-label="${u}">${u}</span>`
+        : `<button class="casa" type="button" data-i="${i}" aria-label="Espaço ${i + 1} de ${unidades.length}, vazio"></button>`;
       i++;
       return html;
-    }).join('')}</div>`).join('');
+    };
+    $('palavra').classList.remove('completa');
+    $('palavra').classList.toggle('por-silaba', modo === 'silabas');
+    $('palavra').innerHTML = p.silabas.map((s) => `<div class="silaba">${modo === 'letras' ? [...s].map(casa).join('') : casa(s)}</div>`).join('');
     ajustarCasas();
 
-    const queFaltam = [...texto].filter((_, k) => !jogo.preenchidas[k]).join('');
-    $('letras').innerHTML = montarPecas(queFaltam).map((l) =>
-      `<button class="peca" type="button" data-letra="${l}" style="background:${CORES_LETRAS[l]}" aria-label="Letra ${l}">${l}</button>`).join('');
+    const queFaltam = unidades.filter((_, k) => !jogo.preenchidas[k]);
+    const pecas = modo === 'letras' ? montarPecas(queFaltam.join('')) : montarSilabas(queFaltam);
+    $('letras').classList.toggle('por-silaba', modo === 'silabas');
+    $('letras').innerHTML = pecas.map((u) =>
+      `<button class="peca" type="button" data-letra="${u}" style="background:${corDe(u)}" aria-label="${nomePeca[0]} ${u}">${u}</button>`).join('');
 
     escolhida = null;
     anaEstado('pensa');
-    avisar(faltam.size < texto.length
-      ? `Complete a palavra: faltam ${faltam.size} ${faltam.size > 1 ? 'letras' : 'letra'}.`
-      : `Nova palavra com ${texto.length} letras.`);
+    avisar(faltam.size < unidades.length
+      ? `Complete a palavra: ${faltam.size > 1 ? 'faltam' : 'falta'} ${faltam.size} ${nomePeca[faltam.size > 1 ? 1 : 0]}.`
+      : `Nova palavra com ${unidades.length} ${nomePeca[1]}.`);
   }
 
   // Quantas letras a criança coloca: começa com 1, depois metade, depois a palavra inteira
@@ -280,11 +325,13 @@
   // tamanho das casas para caber a palavra inteira na largura da tela
   function ajustarCasas() {
     const area = $('palavra');
-    const n = jogo?.atual?.texto.length || 4;
     const silabas = jogo?.atual?.silabas.length || 2;
-    const espacos = (silabas - 1) * 14 + (n - silabas) * 4 + 8;
+    const porSilaba = jogo?.atual?.modo === 'silabas';
+    // numa casa de sílaba cabem 2 letras: conta como 1,6 casa de letra
+    const n = porSilaba ? silabas * 1.6 : (jogo?.atual?.texto.length || 4);
+    const espacos = (silabas - 1) * 14 + (porSilaba ? 0 : (n - silabas) * 4) + 8;
     const largura = Math.min(area.clientWidth || window.innerWidth - 32, 720);
-    const tamanho = Math.max(30, Math.min(80, Math.floor((largura - espacos) / n / 1.0)));
+    const tamanho = Math.max(30, Math.min(80, Math.floor((largura - espacos) / n)));
     area.style.setProperty('--casa', `${tamanho}px`);
   }
   window.addEventListener('resize', ajustarCasas);
@@ -415,7 +462,7 @@
   function tentar(i, letra) {
     const p = jogo.atual;
     if (jogo.bloqueado || jogo.preenchidas[i]) return false;
-    const certa = p.texto[i];
+    const certa = p.unidades[i];
     const casa = document.querySelector(`#palavra .casa[data-i="${i}"]`);
 
     if (letra !== certa) {
@@ -424,7 +471,7 @@
       void casa.offsetWidth;
       casa.classList.add('errou');
       anaEstado('triste', 1800);
-      avisar(`A letra ${letra} não é desse espaço. Tente outra.`);
+      avisar(`${letra} não é desse espaço. Tente outra.`);
       falarAna('erro');
       return false;
     }
@@ -437,16 +484,16 @@
 
     jogo.preenchidas[i] = true;
     casa.textContent = letra;
-    casa.style.background = CORES_LETRAS[letra];
+    casa.style.background = corDe(letra);
     casa.classList.remove('errou');
     casa.classList.add('cheia');
-    casa.setAttribute('aria-label', `Espaço ${i + 1}: letra ${letra}`);
+    casa.setAttribute('aria-label', `Espaço ${i + 1}: ${letra}`);
 
     if (jogo.preenchidas.every(Boolean)) {
       palavraCompleta();
     } else {
       anaEstado('danca', 1500);
-      avisar(`Muito bem! Letra ${letra}.`);
+      avisar(`Muito bem! ${letra}.`);
       falarAna('acerto');
     }
     return true;
@@ -461,8 +508,9 @@
     $('palavra').classList.add('completa');
     anaEstado('danca');
     avisar(`Parabéns! Você montou a palavra ${p.texto}.`);
-    await falarAna('acerto');
+    await Promise.all([falarAna('acerto'), esperar(1500)]);
     if (!jogo || jogo.acabou) return;
+    await esperarSilencio();
     await falarAna('mudar');
     if (!jogo || jogo.acabou) return;
     proximaPalavra();
@@ -471,7 +519,7 @@
     rodarRelogio(true);
   }
 
-  $('btn-ouvir').onclick = () => { if (jogo?.atual) falarTexto(jogo.atual.texto.toLowerCase()); };
+  $('btn-ouvir').onclick = () => { if (jogo?.atual) falarSeLivre(jogo.atual.texto.toLowerCase()); };
 
   // ---------- Fim e relatório ----------
   async function fimDaPartida() {
@@ -484,7 +532,7 @@
     const r = calcularRelatorio();
     salvarHistorico(r);
     mostrarRelatorio(r);
-    falarAna('fim');
+    esperarSilencio().then(() => falarAna('fim'));
   }
 
   const classe = (s) => (s <= OTIMO ? 'otimo' : s <= REGULAR ? 'regular' : 'treinar');
@@ -527,7 +575,7 @@
     const lentas = listaLetras.filter((l) => l.vezes && l.media > REGULAR).sort((a, b) => b.media - a.media).slice(0, 5);
     if (lentas.length) dificuldades.push(`Demorou para achar: ${lentas.map((l) => `<b>${l.letra}</b> (${fmt(l.media)} s)`).join(', ')}.`);
     porPalavra.filter((p) => p.classe === 'treinar' && p.completa).forEach((p) =>
-      dificuldades.push(`Palavra <b>${p.texto}</b>: ${fmt(p.media)} s por letra, precisa treinar mais.`));
+      dificuldades.push(`Palavra <b>${p.texto}</b>: ${fmt(p.media)} s por peça, precisa treinar mais.`));
     const incompleta = porPalavra.find((p) => !p.completa);
     if (incompleta) dificuldades.push(`O tempo acabou durante a palavra <b>${incompleta.texto}</b> (${incompleta.letras} de ${incompleta.faltam} letras).`);
     if (!dificuldades.length) dificuldades.push('Nenhuma dificuldade forte nesta partida. Continue praticando!');
@@ -551,6 +599,7 @@
   let ultimo = null;
   function mostrarRelatorio(r) {
     ultimo = r;
+    $('dica-envio').hidden = true;
     mostrar('tela-relatorio');
     $('fim-nome').textContent = nome;
     $('ana-fim').className = `ana-sprite grande ${r.classe === 'treinar' ? 'pensa' : 'danca'}`;
@@ -561,12 +610,12 @@
 
     $('selo').className = `selo ${r.classe}`;
     $('selo').innerHTML = r.letras
-      ? `${NOME_CLASSE[r.classe]}<small>média de ${fmt(r.media)} s por letra</small>`
+      ? `${NOME_CLASSE[r.classe]}<small>média de ${fmt(r.media)} s por peça</small>`
       : 'Sem letras colocadas<small>a partida terminou antes da primeira letra</small>';
 
     $('numeros').innerHTML = [
       ['Palavras montadas', r.completas],
-      ['Letras colocadas', r.letras],
+      ['Peças colocadas', r.letras],
       ['Erros', r.erros],
       ['Certas de primeira', `${r.primeira}%`],
     ].map(([t, v]) => `<div class="numero"><b>${v}</b>${t}</div>`).join('');
@@ -601,8 +650,8 @@
     ctx.clearRect(0, 0, W, H);
     const itens = r.porPalavra.filter((p) => p.letras);
     if (!itens.length) { semDados(ctx, W, H); return; }
-    const maxV = Math.max(6, Math.ceil(Math.max(...itens.map((p) => p.media)) + 1));
-    eixo(ctx, W, H, m, maxV, maxV > 10 ? 2 : 1, ' s');
+    const maxV = Math.max(REGULAR + 2, Math.ceil(Math.max(...itens.map((p) => p.media)) + 1));
+    eixo(ctx, W, H, m, maxV, maxV > 12 ? 4 : 2, ' s');
     // linhas de referência 2 s e 4 s
     [[OTIMO, COR_CLASSE.otimo], [REGULAR, COR_CLASSE.regular]].forEach(([v, cor]) => {
       const y = H - m.b - (v / maxV) * (H - m.t - m.b);
@@ -626,7 +675,7 @@
       ctx.fillText(p.texto + (p.completa ? '' : '…'), x + barra / 2, H - m.b + 10);
       ctx.font = '17px Andika, Verdana, sans-serif';
       ctx.fillStyle = '#5b4763';
-      ctx.fillText(`${p.letras} letras · ${Math.round(p.total)}s`, x + barra / 2, H - m.b + 38);
+      ctx.fillText(`${p.letras} peças · ${Math.round(p.total)}s`, x + barra / 2, H - m.b + 38);
     });
   }
 
@@ -636,8 +685,8 @@
     ctx.clearRect(0, 0, W, H);
     const itens = r.listaLetras.filter((l) => l.erros || l.media > OTIMO).slice(0, 10);
     if (!itens.length) { semDados(ctx, W, H, 'Nenhuma letra com dificuldade! 🎉'); return; }
-    const maxV = Math.max(6, Math.ceil(Math.max(...itens.map((l) => l.media)) + 1));
-    eixo(ctx, W, H, m, maxV, maxV > 10 ? 2 : 1, ' s');
+    const maxV = Math.max(REGULAR + 2, Math.ceil(Math.max(...itens.map((l) => l.media)) + 1));
+    eixo(ctx, W, H, m, maxV, maxV > 12 ? 4 : 2, ' s');
     const largura = (W - m.l - m.r) / itens.length;
     const barra = Math.min(70, largura * 0.6);
     itens.forEach((l, i) => {
@@ -659,15 +708,15 @@
     ctx.textBaseline = 'top';
     ctx.fillStyle = '#5b4763';
     ctx.font = '19px Andika, Verdana, sans-serif';
-    ctx.fillText('barra = tempo médio para achar a letra · ✗ = erros naquela letra', m.l, 6);
+    ctx.fillText('barra = tempo médio para achar a peça · ✗ = erros naquela peça', m.l, 6);
   }
 
   function graficoEvolucao(cv, h) {
     const ctx = cv.getContext('2d');
     const W = cv.width, H = cv.height, m = { l: 70, r: 30, t: 30, b: 50 };
     ctx.clearRect(0, 0, W, H);
-    const maxV = Math.max(6, Math.ceil(Math.max(...h.map((x) => x.media)) + 1));
-    eixo(ctx, W, H, m, maxV, maxV > 10 ? 2 : 1, ' s');
+    const maxV = Math.max(REGULAR + 2, Math.ceil(Math.max(...h.map((x) => x.media)) + 1));
+    eixo(ctx, W, H, m, maxV, maxV > 12 ? 4 : 2, ' s');
     const px = (i) => m.l + (h.length === 1 ? 0 : (i / (h.length - 1)) * (W - m.l - m.r));
     const py = (v) => H - m.b - (v / maxV) * (H - m.t - m.b);
     ctx.strokeStyle = '#1f4fa8'; ctx.lineWidth = 4;
@@ -699,7 +748,7 @@
     return [
       `📋 ABC da Tia ANA - relatório de ${r.nome}`,
       `${r.data.toLocaleDateString('pt-BR')} - partida de 1 min e 30 s`,
-      `Resultado: ${NOME_CLASSE[r.classe]} (${fmt(r.media)} s por letra)`,
+      `Resultado: ${NOME_CLASSE[r.classe]} (${fmt(r.media)} s por peça)`,
       `Palavras montadas: ${r.completas} · Letras: ${r.letras} · Erros: ${r.erros} · Certas de primeira: ${r.primeira}%`,
       `Palavras: ${r.porPalavra.map((p) => `${p.texto} ${fmt(p.media)}s`).join(', ') || '-'}`,
       'Dificuldades:',
@@ -727,16 +776,16 @@
     doc.roundedRect(L, y, Wp, 16, 3, 3, 'F');
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(15);
-    doc.text(`${NOME_CLASSE[r.classe]}: média de ${fmt(r.media)} s por letra`, L + 5, y + 10.5);
+    doc.text(`${NOME_CLASSE[r.classe]}: média de ${fmt(r.media)} s por peça`, L + 5, y + 10.5);
     y += 24;
     doc.setTextColor(45, 27, 51);
     doc.setFontSize(12);
     doc.setFont('helvetica', 'normal');
-    doc.text(`Palavras montadas: ${r.completas}    Letras colocadas: ${r.letras}    Erros: ${r.erros}    Certas de primeira: ${r.primeira}%`, L, y);
+    doc.text(`Palavras montadas: ${r.completas}    Peças colocadas: ${r.letras}    Erros: ${r.erros}    Certas de primeira: ${r.primeira}%`, L, y);
     y += 6;
     doc.setFontSize(10);
     doc.setTextColor(91, 71, 99);
-    doc.text(`Critério: até ${OTIMO} s por letra = ótimo · até ${REGULAR} s = regular · mais que isso = treinar mais`, L, y);
+    doc.text(`Critério: até ${OTIMO} s por peça = ótimo · até ${REGULAR} s = regular · mais que isso = treinar mais`, L, y);
     y += 8;
 
     const imagem = (cv, titulo) => {
@@ -747,8 +796,8 @@
       doc.addImage(cv.toDataURL('image/png'), 'PNG', L, y, Wp, h, undefined, 'FAST');
       y += h + 8;
     };
-    imagem($('grafico-palavras'), 'Tempo por letra em cada palavra');
-    imagem($('grafico-letras'), 'Letras com mais dificuldade');
+    imagem($('grafico-palavras'), 'Tempo por peça (letra ou sílaba) em cada palavra');
+    imagem($('grafico-letras'), 'Letras e sílabas com mais dificuldade');
 
     if (y > 250) { doc.addPage(); y = 18; }
     doc.setFont('helvetica', 'bold'); doc.setFontSize(13); doc.setTextColor(31, 79, 168);
@@ -780,7 +829,7 @@
     });
 
     const h = ler(chaveHistorico(), []);
-    if (h.length >= 2) imagem($('grafico-evolucao'), 'Evolução nas últimas partidas (segundos por letra)');
+    if (h.length >= 2) imagem($('grafico-evolucao'), 'Evolução nas últimas partidas (segundos por peça)');
 
     const paginas = doc.getNumberOfPages();
     for (let i = 1; i <= paginas; i++) {
@@ -799,7 +848,7 @@
     if (!ultimo) return;
     const doc = gerarPDF(ultimo);
     const arquivo = new File([doc.output('blob')], nomeArquivo(ultimo), { type: 'application/pdf' });
-    const texto = textoResumo(ultimo);
+    const texto = `Oi Tia Ana, segue o relatório de ${ultimo.nome}`;
     if (navigator.canShare && navigator.canShare({ files: [arquivo] })) {
       try {
         await navigator.share({ files: [arquivo], title: `Relatório de ${ultimo.nome}`, text: texto });
@@ -809,6 +858,8 @@
       }
     }
     // Sem compartilhar arquivos (computador): baixa o PDF e abre o WhatsApp com o resumo
+    $('dica-envio').hidden = false;
+    $('dica-envio').innerHTML = 'O PDF foi baixado e a conversa da Tia Ana abriu no WhatsApp. <b>Arraste o PDF para a conversa</b> (ou toque no clipe 📎) e envie.';
     doc.save(nomeArquivo(ultimo));
     window.open(`https://wa.me/${TELEFONE_ANA}?text=${encodeURIComponent(texto)}`, '_blank', 'noopener');
   };

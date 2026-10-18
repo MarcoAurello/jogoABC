@@ -257,3 +257,18 @@ body {
 /* letras que já vêm prontas na palavra */
 .casa.dada { cursor: default; animation: none; filter: saturate(0.75); box-shadow: inset 0 -4px 0 rgba(0, 0, 0, 0.18); }
 .figura img { border-radius: 20px; }
+
+/* modo sílabas: casas e peças com a sílaba inteira (BA · NA · NA) */
+.palavra.por-silaba .casa { width: calc(var(--casa, 72px) * 1.6); font-size: calc(var(--casa, 72px) * 0.62); }
+.letras.por-silaba .peca { font-size: calc(var(--peca) * 0.46); letter-spacing: 1px; }
+
+/* WhatsApp da Tia Ana */
+.btn-whats, .btn-whats-grande {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  background: #1a8d4a; color: #fff; font: inherit; font-weight: 700; font-size: 1.3rem;
+  border: none; border-radius: 20px; min-height: 60px; padding: 10px 24px; text-decoration: none;
+  box-shadow: 0 6px 0 #0f5e30; cursor: pointer;
+}
+.btn-whats-grande { font-size: 1.5rem; }
+.btn-whats:active, .btn-whats-grande:active { transform: translateY(4px); box-shadow: 0 2px 0 #0f5e30; }
+.dica-envio { background: #e7f7ee; border: 3px solid #1a8d4a; border-radius: 14px; padding: 10px 14px; font-size: 1.1rem; margin: 16px 0 0; }

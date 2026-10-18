@@ -19,7 +19,6 @@ const PALAVRAS = [
   { silabas: ['CA', 'MA'], emoji: '🛏️' },
   { silabas: ['LO', 'BO'], emoji: '🐺' },
   { silabas: ['GE', 'LO'], emoji: '🧊' },
-  { silabas: ['FA', 'DA'], emoji: '🧚' },
   { silabas: ['CA', 'SA'], emoji: '🏠', img: 'assets/figuras/casa.jpg' },
   { silabas: ['DE', 'DO'], emoji: '☝️' },
   { silabas: ['PE', 'NA'], emoji: '🪶' },
@@ -52,7 +51,6 @@ const PALAVRAS = [
   { silabas: ['PE', 'PI', 'NO'], emoji: '🥒' },
   { silabas: ['CE', 'BO', 'LA'], emoji: '🧅' },
   { silabas: ['SA', 'LA', 'DA'], emoji: '🥗' },
-  { silabas: ['CO', 'MI', 'DA'], emoji: '🍽️' },
   { silabas: ['SA', 'CO', 'LA'], emoji: '🛍️' },
   // 4 sílabas
   { silabas: ['TE', 'LE', 'FO', 'NE'], emoji: '📞', img: 'assets/figuras/telefone.jpg' },
@@ -65,7 +63,6 @@ const PALAVRAS = [
   { silabas: ['LI', 'MO', 'NA', 'DA'], emoji: '🍋' },
   // 5 sílabas
   { silabas: ['JA', 'BU', 'TI', 'CA', 'BA'], emoji: '🫐' },
-  { silabas: ['TE', 'LE', 'FO', 'NE', 'MA'], emoji: '📲' },
 ];
 
 /* Letras que costumam confundir quem está aprendendo a ler (espelhadas, de som ou forma parecida).

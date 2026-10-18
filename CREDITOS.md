@@ -28,7 +28,7 @@ Fotos do Wikimedia Commons, usadas conforme a licença de cada uma (recortadas e
 | CAVALO | Nokota_Horses.jpg: François Marchal
 | MACACO | Deerpeter | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:Ubud_Monkey_Family.jpg |
 | BONECA | A.J. Clothes made by my wife, Iric (http://kochamgeeka.blox.pl) | CC BY-SA 3.0 | https://commons.wikimedia.org/wiki/File:Baby_doll-Calineczka-2006.jpg |
-| SAPATO | Jacek Halicki | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:2023_Adidas_Yeezy_350_V2_EF2905_(1).jpg |
+| SAPATO | Ch Th Jo | CC BY-SA 3.0 | https://commons.wikimedia.org/wiki/File:Mens_brown_derby_leather_shoes.jpg |
 | BATATA | Scott Bauer, USDA ARS | Public domain | https://commons.wikimedia.org/wiki/File:Patates.jpg |
 | TOMATE | Softeis | CC BY-SA 3.0 | https://commons.wikimedia.org/wiki/File:Tomato_je.jpg |
 | PIPOCA | HaJunkiyada | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:Liat_Portal_for_Foodie_Disorder_-_Popcorn.jpg |

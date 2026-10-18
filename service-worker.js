@@ -1,14 +1,14 @@
 // Guarda os arquivos do jogo para funcionar offline.
 // Ao mudar qualquer arquivo, aumente a VERSAO (e o ?v= no index.html) para os aparelhos baixarem a nova.
-const VERSAO = 'abc-tia-ana-v4';
+const VERSAO = 'abc-tia-ana-v5';
 
 const ARQUIVOS = [
   './',
   './index.html',
-  './style.css?v=4',
-  './dados.js?v=4',
-  './musica.js?v=4',
-  './jogo.js?v=4',
+  './style.css?v=5',
+  './dados.js?v=5',
+  './musica.js?v=5',
+  './jogo.js?v=5',
   './vendor/jspdf.umd.min.js',
   './manifest.json',
   './assets/ana/ana_livro.jpg',
@@ -18,7 +18,7 @@ const ARQUIVOS = [
   ...['bola', 'vaca', 'pato', 'gato', 'sapo', 'mala', 'dado', 'foca', 'moto', 'bolo', 'cama', 'lobo', 'gelo', 'casa', 'pera',
     'rato', 'bota', 'suco', 'galo', 'fogo', 'banana', 'cavalo', 'macaco', 'boneca', 'sapato', 'batata', 'tomate', 'pipoca',
     'camelo', 'menina', 'menino', 'coruja', 'girafa', 'pepino', 'cebola'].map((f) => `./assets/fotos/${f}.jpg`),
-  ...['convite', 'explicacao-inicial', 'acerto1', 'acerto2', 'erroletra1', 'erroletra2', 'erroletra3', 'mudar-palavra', 'recado-fim']
+  ...['convite', 'explicacao-inicial', 'acerto1', 'acerto2', 'erroletra1', 'erroletra2', 'erroletra3', 'mudar-palavra', 'faltam-30', 'recado-fim']
     .map((a) => `./audios/${a}.ogg`),
   './icons/icon-192.png',
   './icons/icon-512.png',

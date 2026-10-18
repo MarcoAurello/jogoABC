@@ -5,6 +5,7 @@
   const DURACAO = 120;        // segundos de cada partida (2 minutos)
   const AVISO_FINAL = 30;     // faltando 30 s, a Tia Ana avisa para correr
   const MUDAR_A_CADA = 3;     // o áudio "mudar de palavra" toca a cada 3 palavras montadas
+  const RECADO_EM = 60;       // com 1 minuto de jogo toca o recado da Tia Ana (que também toca no fim)
   const OTIMO = 5;            // até 5 s por letra: ótimo
   const REGULAR = 10;         // até 10 s por letra: regular; acima disso: treinar mais
   const PALAVRAS_POR_NIVEL = 2; // a cada 2 palavras montadas, a palavra ganha mais uma sílaba
@@ -250,12 +251,21 @@
     return Math.min(maior, 2 + Math.floor(feitas / PALAVRAS_POR_NIVEL));
   }
 
+  // Palavras vistas nas últimas partidas (por jogador), para não repetir sempre as mesmas
+  const chaveVistas = () => `abc-ana:vistas:${nome.toLowerCase()}`;
+
   function escolherPalavra() {
     const nivel = nivelAtual();
+    const vistas = ler(chaveVistas(), []);   // da mais antiga para a mais recente
     let opcoes = PALAVRAS.filter((p) => p.silabas.length === nivel && !jogo.usadas.has(p.silabas.join('')));
     if (!opcoes.length) opcoes = PALAVRAS.filter((p) => p.silabas.length === nivel);
-    const p = opcoes[Math.floor(Math.random() * opcoes.length)];
-    jogo.usadas.add(p.silabas.join(''));
+    // prioridade: as que a criança nunca viu; depois as vistas há mais tempo
+    const recencia = (p) => vistas.lastIndexOf(p.silabas.join(''));
+    opcoes = embaralhar(opcoes).sort((a, b) => recencia(a) - recencia(b));
+    const p = opcoes[Math.floor(Math.random() * Math.min(3, opcoes.length))];
+    const chave = p.silabas.join('');
+    jogo.usadas.add(chave);
+    guardar(chaveVistas(), [...vistas.filter((v) => v !== chave), chave].slice(-PALAVRAS.length));
     return p;
   }
 
@@ -387,6 +397,11 @@
       jogo.avisou = true;
       avisar('Corre! Faltam 30 segundos!');
       esperarSilencio().then(() => { if (!jogo.acabou) falarAna('corre'); });
+    }
+    // com 1 minuto de jogo, a Tia Ana manda o recado dela também
+    if (segundosJogados() >= RECADO_EM && !jogo.recadoMeio && jogo.rodando && resta > AVISO_FINAL) {
+      jogo.recadoMeio = true;
+      esperarSilencio().then(() => { if (!jogo.acabou) falarAna('fim'); });
     }
     $('trilho').style.width = `${(resta / DURACAO) * 100}%`;
     $('contador').textContent = `⭐ ${jogo.palavras.filter((p) => p.completa).length}`;

@@ -29,7 +29,7 @@ const PALAVRAS = [
   { silabas: ['CA', 'VA', 'LO'], emoji: '🐎', img: 'assets/fotos/cavalo.jpg' },
   { silabas: ['MA', 'CA', 'CO'], emoji: '🐒', img: 'assets/fotos/macaco.jpg' },
   { silabas: ['BO', 'NE', 'CA'], emoji: '🪆', img: 'assets/fotos/boneca.jpg' },
-  { silabas: ['SA', 'PA', 'TO'], emoji: '👟', img: 'assets/fotos/sapato.jpg' },
+  { silabas: ['SA', 'PA', 'TO'], emoji: '👞', img: 'assets/fotos/sapato.jpg' },
   { silabas: ['BA', 'TA', 'TA'], emoji: '🥔', img: 'assets/fotos/batata.jpg' },
   { silabas: ['TO', 'MA', 'TE'], emoji: '🍅', img: 'assets/fotos/tomate.jpg' },
   { silabas: ['PI', 'PO', 'CA'], emoji: '🍿', img: 'assets/fotos/pipoca.jpg' },

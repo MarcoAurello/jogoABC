@@ -8,6 +8,7 @@ A criança vê a figura e arrasta as letras até o lugar certo da palavra. A Tia
 - Pede o nome do jogador e mostra a Tia Ana.
 - Partida de **2 minutos** (o relógio para enquanto a Tia Ana troca de palavra). Faltando 30 s o relógio pisca e a Tia Ana avisa para correr.
 - Palavras só com sílabas simples (consoante + vogal), de 2 e 3 sílabas (até 6 letras), em `dados.js`.
+- As palavras que a criança viu nas últimas partidas ficam para depois (o jogo lembra de cada jogador), para não repetir sempre as mesmas.
 - Começa fácil e vai dificultando:
   - 1ª e 2ª palavras: falta só **uma letra** (ex.: `C _ P O`);
   - 3ª e 4ª: falta **metade**;
@@ -42,8 +43,8 @@ o número está em `TELEFONE_ANA` no `jogo.js` (81 98821-9018). A mensagem é "O
 | acerto1/2.ogg | letra certa (alternando) |
 | erroletra1/2/3.ogg | letra errada (em rodízio) |
 | mudar-palavra.ogg | a cada 3 palavras montadas |
-| faltam-30.ogg | faltando 30 segundos (a Tia Ana vai gravar; até lá só o relógio pisca) |
-| recado-fim.ogg | fim do tempo |
+| faltam-30.ogg | faltando 30 segundos |
+| recado-fim.ogg | com 1 minuto de jogo e no fim do tempo |
 
 A Tia Ana fala **um áudio por vez**: se já estiver falando, o novo áudio não toca.
 O silêncio do começo e do fim das gravações é cortado na hora de tocar. Se o aparelho não tocar `.ogg`,

@@ -39,3 +39,20 @@ Fotos do Wikimedia Commons, usadas conforme a licença de cada uma (recortadas e
 | GIRAFA | Muhammad Mahdi Karim Facebook
 | PEPINO | Stephen Ausmus, USDA ARS | Public domain | https://commons.wikimedia.org/wiki/File:ARS_cucumber.jpg |
 | CEBOLA | Colin | CC BY-SA 3.0 | https://commons.wikimedia.org/wiki/File:Mixed_onions.jpg |
+| VELA | Rolf Schweizer Fotografie from Hoffeld, Schweiz | CC BY 2.0 | https://commons.wikimedia.org/wiki/File:Pourquoi._Lit_candle._(22590133777).jpg |
+| TATU | Charles J. Sharp | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:Six-banded_armadillo_(Euphractus_sexcinctus).JPG |
+| SOPA | Whoisjohngalt | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:Bowl_of_lentil_soup_with_green_and_red_lentils.jpg |
+| ROSA | Laitche | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:Red_rose_with_black_background.jpg |
+| COCO | Ivar Leidus | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:Coconuts_-_single_and_cracked_open.jpg |
+| CAJU | Preetti Sri | CC0 | https://commons.wikimedia.org/wiki/File:CASHEW_FRUIT.jpg |
+| RODA |  | CC BY-SA 3.0 | https://commons.wikimedia.org/wiki/File:Wheel_Iran.jpg |
+| REDE |  | CC BY 2.0 | https://commons.wikimedia.org/wiki/File:Hammock_040522.jpg |
+| FITA | Stilfehler | CC BY-SA 3.0 | https://commons.wikimedia.org/wiki/File:Pink_Bow.jpg |
+| BULE | George Chernilevsky | Public domain | https://commons.wikimedia.org/wiki/File:Teapot_2010_G1.jpg |
+| PANELA | Matti Blume | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:Pot_(IMG_0261).jpg |
+| BIGODE | Yann (talk) | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:Man_with_a_moustache,_Chambal,_India.jpg |
+| TAPETE | Unknown artistUnknown artist | Public domain | https://commons.wikimedia.org/wiki/File:%27Animal_fighting%27_carpet_(MCG_T100).jpg |
+| TUCANO | Giles Laurent | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:006_Toco_toucan_in_Encontro_das_%C3%81guas_State_Park_Photo_by_Giles_Laurent.jpg |
+| JABUTI | Charles J. Sharp | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:Radiated_tortoise_(Astrochelys_radiata)_Tsimanampetsotsa.jpg |
+| CAMISA | autor indicado na página de origem | CC BY-SA 3.0 | https://commons.wikimedia.org/wiki/File:Blue_Business_Shirt.jpg |
+| GAVETA | Aral Balkan from Brighton, United Kingdom | CC BY 2.0 | https://commons.wikimedia.org/wiki/File:Side_table_drawer.jpg |

@@ -1,3 +1,24 @@
-SAPATO|leather shoe
-SAPATO2|dress shoes pair
-SAPATO3|brown leather shoe
+VELA|candle lit
+TATU|armadillo
+LUVA|winter glove
+SOPA|bowl of soup
+ROSA|red rose flower
+COCO|coconut
+CAJU|cashew apple fruit
+RODA|wheel
+REDE|hammock
+FITA|ribbon bow
+BULE|teapot
+PIPA|diamond kite
+PANELA|cooking pot
+CANECA|mug
+PETECA|peteca
+CABIDE|clothes hanger
+BIGODE|moustache
+TAPETE|rug carpet
+PERUCA|wig
+TUCANO|toucan
+JABUTI|tortoise
+PIJAMA|pajamas
+CAMISA|shirt
+GAVETA|drawer

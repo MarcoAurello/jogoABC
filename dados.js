@@ -24,6 +24,16 @@ const PALAVRAS = [
   { silabas: ['SU', 'CO'], emoji: '🧃', img: 'assets/fotos/suco.jpg' },
   { silabas: ['GA', 'LO'], emoji: '🐓', img: 'assets/fotos/galo.jpg' },
   { silabas: ['FO', 'GO'], emoji: '🔥', img: 'assets/fotos/fogo.jpg' },
+  { silabas: ['VE', 'LA'], emoji: '🕯️', img: 'assets/fotos/vela.jpg' },
+  { silabas: ['TA', 'TU'], emoji: '🦔', img: 'assets/fotos/tatu.jpg' },
+  { silabas: ['SO', 'PA'], emoji: '🍲', img: 'assets/fotos/sopa.jpg' },
+  { silabas: ['RO', 'SA'], emoji: '🌹', img: 'assets/fotos/rosa.jpg' },
+  { silabas: ['CO', 'CO'], emoji: '🥥', img: 'assets/fotos/coco.jpg' },
+  { silabas: ['CA', 'JU'], emoji: '🍎', img: 'assets/fotos/caju.jpg' },
+  { silabas: ['RO', 'DA'], emoji: '🛞', img: 'assets/fotos/roda.jpg' },
+  { silabas: ['RE', 'DE'], emoji: '🏝️', img: 'assets/fotos/rede.jpg' },
+  { silabas: ['FI', 'TA'], emoji: '🎀', img: 'assets/fotos/fita.jpg' },
+  { silabas: ['BU', 'LE'], emoji: '🫖', img: 'assets/fotos/bule.jpg' },
   // 3 sílabas
   { silabas: ['BA', 'NA', 'NA'], emoji: '🍌', img: 'assets/fotos/banana.jpg' },
   { silabas: ['CA', 'VA', 'LO'], emoji: '🐎', img: 'assets/fotos/cavalo.jpg' },
@@ -40,6 +50,13 @@ const PALAVRAS = [
   { silabas: ['GI', 'RA', 'FA'], emoji: '🦒', img: 'assets/fotos/girafa.jpg' },
   { silabas: ['PE', 'PI', 'NO'], emoji: '🥒', img: 'assets/fotos/pepino.jpg' },
   { silabas: ['CE', 'BO', 'LA'], emoji: '🧅', img: 'assets/fotos/cebola.jpg' },
+  { silabas: ['PA', 'NE', 'LA'], emoji: '🍳', img: 'assets/fotos/panela.jpg' },
+  { silabas: ['BI', 'GO', 'DE'], emoji: '👨', img: 'assets/fotos/bigode.jpg' },
+  { silabas: ['TA', 'PE', 'TE'], emoji: '🧶', img: 'assets/fotos/tapete.jpg' },
+  { silabas: ['TU', 'CA', 'NO'], emoji: '🐦', img: 'assets/fotos/tucano.jpg' },
+  { silabas: ['JA', 'BU', 'TI'], emoji: '🐢', img: 'assets/fotos/jabuti.jpg' },
+  { silabas: ['CA', 'MI', 'SA'], emoji: '👔', img: 'assets/fotos/camisa.jpg' },
+  { silabas: ['GA', 'VE', 'TA'], emoji: '🗄️', img: 'assets/fotos/gaveta.jpg' },
 ];
 
 

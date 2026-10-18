@@ -51,7 +51,7 @@
     ctxVoz = new AC();
     carregando = Promise.all(Object.values(AUDIOS).flat().map(async (arquivo) => {
       try {
-        const dados = await (await fetch(`audios/${arquivo}.ogg`)).arrayBuffer();
+        const dados = await (await fetch(`audios/${arquivo}.wav`)).arrayBuffer();
         const buffer = await new Promise((ok, falha) => ctxVoz.decodeAudioData(dados, ok, falha));
         const c = buffer.getChannelData(0);
         let pico = 0;
@@ -76,8 +76,18 @@
 
   // O navegador só libera o som depois de um toque: liberamos no primeiro toque em qualquer lugar
   function liberarSom() {
+    // iPhone: toca como mídia, para sair som mesmo com a chave de silencioso ligada
+    try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch (e) {}
     carregarAudios();
-    if (ctxVoz && ctxVoz.state !== 'running') ctxVoz.resume().catch(() => {});
+    if (!ctxVoz || ctxVoz.state === 'running') return;
+    ctxVoz.resume().catch(() => {});
+    // iPhone só libera o som se algo tocar dentro do próprio toque: um silêncio curtinho
+    try {
+      const s = ctxVoz.createBufferSource();
+      s.buffer = ctxVoz.createBuffer(1, 1, 22050);
+      s.connect(ctxVoz.destination);
+      s.start(0);
+    } catch (e) {}
   }
   ['pointerdown', 'keydown', 'touchend'].forEach((ev) => document.addEventListener(ev, liberarSom, { capture: true, passive: true }));
 
@@ -100,10 +110,22 @@
     if (tocandoAgora !== meu) return;   // foi calada enquanto carregava
     const t = trechos[lista[i]];
     if (!t || !ctxVoz || ctxVoz.state !== 'running') {
-      // som ainda bloqueado ou .ogg sem suporte: a voz do aparelho fala uma frase parecida
+      // Web Audio indisponível: tenta o player comum do navegador; se nem ele tocar, a voz do aparelho fala
       Musica.abaixar(true);
-      meu.parar = () => speechSynthesis.cancel();
-      if (FALAS[momento]) await falarTexto(FALAS[momento]);   // sem frase (ex.: aviso dos 30 s): fica em silêncio
+      const tocou = await new Promise((fim) => {
+        const a = new Audio(`audios/${lista[i]}.wav`);
+        let pronto = false;
+        const acabar = (ok) => { if (!pronto) { pronto = true; clearTimeout(limite); fim(ok); } };
+        const limite = setTimeout(() => { a.pause(); acabar(true); }, 15000);
+        meu.parar = () => { a.pause(); acabar(true); };
+        a.onended = () => acabar(true);
+        a.onerror = () => acabar(false);
+        a.play().catch(() => acabar(false));
+      });
+      if (!tocou && tocandoAgora === meu && FALAS[momento]) {
+        meu.parar = () => speechSynthesis.cancel();
+        await falarTexto(FALAS[momento]);   // sem frase (ex.: aviso dos 30 s): fica em silêncio
+      }
     } else {
       Musica.abaixar(true);
       await new Promise((fim) => {

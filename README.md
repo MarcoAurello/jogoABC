@@ -38,17 +38,18 @@ o número está em `TELEFONE_ANA` no `jogo.js` (81 98821-9018). A mensagem é "O
 ## Áudios da Tia Ana (`audios/`)
 | Arquivo | Quando toca |
 |---|---|
-| convite.ogg | tela inicial |
-| explicacao-inicial.ogg | antes de começar a partida |
-| acerto1/2.ogg | letra certa (alternando) |
-| erroletra1/2/3.ogg | letra errada (em rodízio) |
-| mudar-palavra.ogg | a cada 3 palavras montadas |
-| faltam-30.ogg | faltando 30 segundos |
-| recado-fim.ogg | com 1 minuto de jogo e no fim do tempo |
+| convite.wav | tela inicial |
+| explicacao-inicial.wav | antes de começar a partida |
+| acerto1/2.wav | letra certa (alternando) |
+| erroletra1/2/3.wav | letra errada (em rodízio) |
+| mudar-palavra.wav | a cada 3 palavras montadas |
+| faltam-30.wav | faltando 30 segundos |
+| recado-fim.wav | com 1 minuto de jogo e no fim do tempo |
 
 A Tia Ana fala **um áudio por vez**: se já estiver falando, o novo áudio não toca.
-O silêncio do começo e do fim das gravações é cortado na hora de tocar. Se o aparelho não tocar `.ogg`,
-a voz do aparelho fala uma frase parecida. A música de fundo é gerada pelo próprio navegador (`musica.js`).
+Os áudios estão em `.wav` (tocam em todo iPhone), já sem o silêncio do começo e com o volume igualado.
+Os originais do WhatsApp (.ogg) ficam em `audios/originais/`. No iPhone o jogo toca como mídia,
+então sai som mesmo com a chave de silencioso ligada (iOS 16.4 ou mais novo). A música de fundo é gerada pelo próprio navegador (`musica.js`).
 
 ## Fotos
 Fotos reais do Wikimedia Commons em `assets/fotos/` (um objeto só, bem claro). Créditos e licenças em `CREDITOS.md`.

@@ -67,3 +67,8 @@ gerando `assets/ana/ana_danca.png`, `ana_triste.png` e `ana_pensa.png`.
 Ao mudar arquivos, aumente `VERSAO` no `service-worker.js` e o `?v=` no `index.html`.
 
 © Marco Nunes — Todos os direitos reservados
+
+## Publicar na VPS (Dokploy)
+
+O `Dockerfile` monta um nginx que serve o jogo em `/abc/`. No Dokploy: Build Type **Dockerfile**,
+domínio com path `/abc`, **Strip Path desligado**, porta **80** e HTTPS (Let's Encrypt).
